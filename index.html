@@ -1,0 +1,275 @@
+<html>
+
+<head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<meta charset="utf-8" />
+<title>System Report</title>
+</head>
+
+<style>
+
+[class*=unit]{
+	padding-top:15px;
+}
+
+[class*=chartDiv]{
+	border:solid 3px;
+	border-radius:15px;
+	padding: 0 8px 15px 8px;
+	box-shadow: 5px 5px 5px 0px grey;
+}
+
+[class*=chartDiv] h3{
+	margin-top:5px;
+}
+
+</style>
+
+<body>
+	<div class="container">
+	  <div class="row">
+	      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 unit" >
+	          <div class="chartDiv" >
+	              <center>
+	                   <h3>RAM - Usage (MB)</h3>
+	               </center>
+	               <canvas id="chart" ></canvas>
+	          </div>
+	      </div>
+
+	      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 unit">
+	         <div class="chartDiv" style="box-shadow: 5px 5px grey;">
+	               <center>
+	                   <h3>Storage {{drive}}</h3>
+	               </center>
+	               <canvas id="chart2" ></canvas>
+	          </div>
+	      </div>
+	  </div>
+
+	  <div class="unit">
+	       <canvas id="chart3" class="chartDiv"></canvas>
+	  </div>
+
+	  <div class="unit">
+	       <canvas id="chart4" class="chartDiv"></canvas>
+	  </div>
+
+		<div class="unit">
+	        <canvas id="chart5" class="chartDiv"></canvas>
+	  </div>
+
+	</div>
+
+	<script>
+	var ctx = document.getElementById("chart").getContext("2d");
+	document.getElementById("chart").height = document.getElementById("chart").width;
+
+	var ram = new Chart(ctx,
+		{
+		type: 'doughnut',
+
+		data:  {
+			datasets: [{
+				 data: [{{used_ram}}, {{free_ram}}] ,
+				 backgroundColor:[
+				     "rgba(255,255,17,255)",
+				     "rgba(255,255,150,255)"
+			    ]
+			}],
+			labels: [ 'Used', 'Free' ]
+		},
+
+		options:{
+			//maintainAspectRatio: false,
+			responsive: true,
+			animation:{
+				enabled:false
+			}
+		}
+	});
+
+	var ctx2 = document.getElementById("chart2").getContext("2d");
+	document.getElementById("chart2").height = document.getElementById("chart2").width;
+
+	var disk = new Chart(ctx2,
+		{
+		type: 'doughnut',
+
+		data:  {
+			datasets: [{
+				 data: [{{used_disk}}, {{free_disk}}] ,
+				 backgroundColor:[
+				     "rgba(255,25,17,255)",
+				     "rgba(255,25,150,255)"
+			    ]
+			}],
+			labels: [ 'Used', 'Free' ]
+		},
+
+		options:{
+			//maintainAspectRatio: false,
+			responsive: true,
+			animation:{
+				enabled:false
+			}
+		}
+	});
+
+	ctx3 = document.getElementById("chart3").getContext("2d");
+	var cpuChartWidth = 50;
+	var cpu = new Chart(ctx3,
+		{
+			type: 'line',
+
+			data: {
+				datasets: [{
+					data: Array(cpuChartWidth).fill(undefined),
+	 			 	backgroundColor:Array(netChartWidth).fill("rgba(255,125,0,10)")
+				}],
+				labels:Array(cpuChartWidth).fill("")
+			},
+
+			options:{
+			   title:{
+				   display:true,
+				   text:"CPU - Usage (%)",
+				   fontSize:25
+			   },
+			   animation:{
+				   duration:0
+			   },
+			   legend: {
+			   	display: false
+			   },
+			   scales: {
+			   	yAxes: [{
+			   		display: true,
+			   		ticks: {
+			   			suggestedMax: 100,
+			   		}
+			   }]
+			  }
+		  }
+	});
+
+
+	ctx4 = document.getElementById("chart4").getContext("2d");
+	var netChartWidth = 50;
+	var netDown = new Chart(ctx4,
+		{
+			type: 'line',
+
+			data: {
+				datasets: [{
+					data: Array(netChartWidth).fill(undefined),
+	 			 	backgroundColor:Array(netChartWidth).fill("rgba(0,125,255,10)")
+				}],
+				labels:Array(netChartWidth).fill("")
+			},
+
+			options:{
+			   title:{
+				   display:true,
+				   text:"Network - Usage (Download - MB)",
+				   fontSize:25
+			   },
+			   animation:{
+				   duration:0
+			   },
+			   legend: {
+			   	display: false
+			   },
+			   scales: {
+			   	yAxes: [{
+			   		display: true,
+			   		ticks: {
+			   			suggestedMax: 50,
+			   		}
+			   }]
+			  }
+		  }
+	});
+
+	ctx5 = document.getElementById("chart5").getContext("2d");
+	var netUp = new Chart(ctx5,
+		{
+			type: 'line',
+
+			data: {
+				datasets: [{
+					data: Array(netChartWidth).fill(undefined),
+	 			 	backgroundColor:Array(netChartWidth).fill("rgba(0,125,255,10)")
+				}],
+				labels:Array(netChartWidth).fill("")
+			},
+
+			options:{
+			   title:{
+				   display:true,
+				   text:"Network - Usage (Upload - MB)",
+				   fontSize:25
+			   },
+			   animation:{
+				   duration:0
+			   },
+			   legend: {
+			   	display: false
+			   },
+			   scales: {
+			   	yAxes: [{
+			   		display: true,
+			   		ticks: {
+			   			suggestedMax: 50,
+			   		}
+		   	}]
+		   }
+	   }
+	});
+
+	function fetchData(){
+		fetch('./data').then(
+			response => response.json()
+		).then(responseData => {
+			//RAM USAGE
+			ram.data.datasets[0].data = [responseData.memUsed, responseData.memFree];
+			ram.update();
+			// DISK USAGE
+			disk.data.datasets[0].data = [responseData.driveUsed, responseData.driveFree];
+			disk.update();
+			//CPU USAGE
+			var newCpuData = cpu.data.datasets[0].data;
+			for (i = newCpuData.length-1; i>0; i--){
+				newCpuData[i] = newCpuData[i-1];
+			}
+			newCpuData[0] = responseData.cpu;
+			cpu.data.datasets[0].data = newCpuData;
+			cpu.update()
+			//NETWORK (Download) USAGE
+			var newNetData = netDown.data.datasets[0].data;
+			for (i = newNetData.length-1; i>0; i--){
+				newNetData[i] = newNetData[i-1];
+			}
+			newNetData[0] = responseData.net.inputMb;
+			netDown.data.datasets[0].data = newNetData;
+			netDown.update();
+			//NETWORK (Upload) USAGE
+			var newNetData = netUp.data.datasets[0].data;
+			for (i = newNetData.length-1; i>0; i--){
+				newNetData[i] = newNetData[i-1];
+			}
+			newNetData[0] = responseData.net.outputMb;
+			netUp.data.datasets[0].data = newNetData;
+			netUp.update();
+
+		})
+	}
+
+	setInterval(fetchData,1000);
+
+	</script>
+
+</body>
+
+</html>
